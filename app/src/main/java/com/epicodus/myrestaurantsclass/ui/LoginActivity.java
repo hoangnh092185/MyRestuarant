@@ -1,5 +1,6 @@
 package com.epicodus.myrestaurantsclass.ui;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,8 +32,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-//    private ProgressDialog mAuthProgressDialog;
-//    private String mName;
+    private ProgressDialog mAuthProgressDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +58,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }
             }
         };
+        createAuthProgressDialog();
 
+    }
+    private void createAuthProgressDialog() {
+        mAuthProgressDialog = new ProgressDialog(this);
+        mAuthProgressDialog.setTitle("Loading...");
+        mAuthProgressDialog.setMessage("Authenticating with Firebase...");
+        mAuthProgressDialog.setCancelable(false);
     }
 
     @Override
@@ -70,7 +78,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (view == mPasswordLoginButton) {
         loginWithPassword();
         }
-
     }
 
     private void loginWithPassword() {
@@ -90,6 +97,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        mAuthProgressDialog.dismiss();
                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithEmail", task.getException());
@@ -101,24 +109,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-//    private boolean isValidName(String name) {
-//        if (name.equals("")) {
-//            mNameEditText.setError("Please enter your name");
-//            return false;
-//        }
-//        return true;
-//    }
-
-//    private boolean isValidPassword(String password, String confirmPassword) {
-//        if (password.length() < 6) {
-//            mPasswordEditText.setError("Please create a password containing at least 6 characters");
-//            return false;
-//        } else if (!password.equals(confirmPassword)) {
-//            mPasswordEditText.setError("Passwords do not match");
-//            return false;
-//        }
-//        return true;
-//    }
     @Override
     public void onStart() {
         super.onStart();
